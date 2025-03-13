@@ -49,12 +49,15 @@ public class ScraperService {
     }
 
     public boolean isSignedIn() {
+        System.out.println("checking if signed in");
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(WAIT_FOR_ELEMENT_TIMEOUT));
             wait.until(ExpectedConditions.presenceOfElementLocated(By.className("VERIFY_LOGIN_ID")));
             driver.findElement(By.className("VERIFY_LOGIN_ID"));
+            System.out.println("user is logged in");
             return true;
         } catch (Exception e) {
+            System.out.println("user is not logged in");
             return false;
         }
     }
@@ -92,6 +95,16 @@ public class ScraperService {
         }
     }
 
+    public boolean findElementByTagName(String tagName) {
+        try {
+            driver.findElement(By.tagName(tagName));
+            return true;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+
     public boolean findEnabledElementByXpath(String tagName) {
         try {
             WebElement elem = driver.findElement(By.xpath(tagName));
@@ -109,6 +122,8 @@ public class ScraperService {
         }
         return null;
     }
+
+    public WebDriver getDriver() {return this.driver;}
 
 
 }
