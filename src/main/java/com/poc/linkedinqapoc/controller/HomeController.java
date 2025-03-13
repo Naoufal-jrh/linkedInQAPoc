@@ -1,4 +1,4 @@
-package com.poc.linkedinqapoc;
+package com.poc.linkedinqapoc.controller;
 
 
 import org.springframework.web.bind.annotation.GetMapping;
