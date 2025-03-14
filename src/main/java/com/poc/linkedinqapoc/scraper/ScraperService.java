@@ -52,13 +52,13 @@ public class ScraperService {
         System.out.println("checking if signed in");
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(WAIT_FOR_ELEMENT_TIMEOUT));
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.className("VERIFY_LOGIN_ID")));
-            driver.findElement(By.className("VERIFY_LOGIN_ID"));
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.className("join-form")));
+            driver.findElement(By.className("join-form"));
+            System.out.println("user not logged in");
+            return false;
+        } catch (Exception e) {
             System.out.println("user is logged in");
             return true;
-        } catch (Exception e) {
-            System.out.println("user is not logged in");
-            return false;
         }
     }
 
@@ -124,6 +124,18 @@ public class ScraperService {
     }
 
     public WebDriver getDriver() {return this.driver;}
+
+    public void open(String url) {
+        System.out.println("opening " + url);
+        driver.get(url);
+    }
+
+    public void setSessionCookie(String sessionCookie) {
+        System.out.println("set session cookie: " + sessionCookie);
+        driver.manage().addCookie(new Cookie("li_at", sessionCookie));
+        wait(5);
+        driver.navigate().refresh();
+    }
 
 
 }

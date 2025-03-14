@@ -1,5 +1,6 @@
 package com.poc.linkedinqapoc.scraper;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -18,17 +19,19 @@ public class ProfileService {
     private final String TOP_CARD = "main";
     private final int WAIT_FOR_ELEMENT_TIMEOUT = 5;
 
-    private void init(String profileUrl) {
-        System.out.println("opening profile url: " + profileUrl);
-        scraperService.getDriver().get(profileUrl);
-    }
 
-    public Person scrapeProfile(String profileUrl) {
+    public Person scrapeProfile(String profileUrl, String sessionCookie) {
         // open link
-        // signup if not signed up
-        init(profileUrl);
-        if(scraperService.isSignedIn()) return scrapeSignedIn();
-        else return null;
+        scraperService.open(profileUrl);
+        // login
+        int retries = 2;
+        while(!scraperService.isSignedIn()&&retries>0) {
+            scraperService.setSessionCookie(sessionCookie);
+            retries--;
+        }
+        //get first and last name
+
+        return null;
     }
 
     private Person scrapeSignedIn() {
