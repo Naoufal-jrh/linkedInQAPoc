@@ -30,8 +30,15 @@ public class ProfileService {
             retries--;
         }
         //get first and last name
+        Person person = new Person();
+        scraperService.extractProfile(person);
 
-        return null;
+
+        return person;
+    }
+
+    private void setFirstAndLastName(Person person) {
+
     }
 
     private Person scrapeSignedIn() {
@@ -70,19 +77,19 @@ public class ProfileService {
     }
 
     private void setNameAndLocation(Person person) {
-        System.out.println("getting name and location");
-        WebElement topPanel = scraperService.getDriver().findElement(By.xpath("//*[@class='mt2 relative']"));
-        person.setName(
-                topPanel.findElement(
-                        By.tagName("h1")
-                ).getText()
-        );
-        person.setLocation(
-                topPanel.findElement(
-                        By.xpath(
-                                "//*[@class='text-body-small inline t-black--light break-words']"
-                        )
-                ).getText()
-        );
+//        System.out.println("getting name and location");
+//        WebElement topPanel = scraperService.getDriver().findElement(By.xpath("//*[@class='mt2 relative']"));
+//        person.setName(
+//                topPanel.findElement(
+//                        By.tagName("h1")
+//                ).getText()
+//        );
+//        person.setLocation(
+//                topPanel.findElement(
+//                        By.xpath(
+//                                "//*[@class='text-body-small inline t-black--light break-words']"
+//                        )
+//                ).getText()
+//        );
     }
 }

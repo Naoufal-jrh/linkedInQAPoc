@@ -12,7 +12,9 @@ import java.util.List;
 @Builder
 public class Person implements Serializable {
     private String linkedInUrl;
-    private String name;
+    private String firstName;
+    private String lastName;
+    private String headLine;
     private String about;
     private String location;
     private List<Experience> experiences;
