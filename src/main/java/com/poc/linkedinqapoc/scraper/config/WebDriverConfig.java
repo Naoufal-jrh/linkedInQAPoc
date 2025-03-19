@@ -1,4 +1,4 @@
-package com.poc.linkedinqapoc.scraper;
+package com.poc.linkedinqapoc.scraper.config;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;

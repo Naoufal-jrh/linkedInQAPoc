@@ -1,5 +1,8 @@
-package com.poc.linkedinqapoc.scraper;
+package com.poc.linkedinqapoc.scraper.services;
 
+import com.poc.linkedinqapoc.scraper.models.Education;
+import com.poc.linkedinqapoc.scraper.models.Experience;
+import com.poc.linkedinqapoc.scraper.models.Person;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.openqa.selenium.*;

@@ -1,11 +1,9 @@
-package com.poc.linkedinqapoc.controller;
+package com.poc.linkedinqapoc.scraper.controllers;
 
-import com.poc.linkedinqapoc.scraper.Person;
-import com.poc.linkedinqapoc.scraper.ProfileService;
-import com.poc.linkedinqapoc.scraper.ScraperService;
+import com.poc.linkedinqapoc.scraper.models.Person;
+import com.poc.linkedinqapoc.scraper.services.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 

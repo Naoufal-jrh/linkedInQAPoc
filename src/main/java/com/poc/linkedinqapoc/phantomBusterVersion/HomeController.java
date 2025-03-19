@@ -1,8 +1,5 @@
-package com.poc.linkedinqapoc.controller;
+package com.poc.linkedinqapoc.phantomBusterVersion;
 
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 //@RestController
 public class HomeController {

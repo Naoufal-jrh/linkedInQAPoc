@@ -1,8 +1,6 @@
-package com.poc.linkedinqapoc.scraper;
+package com.poc.linkedinqapoc.scraper.models;
 
 import lombok.*;
-
-import java.time.LocalDate;
 
 @Data
 @ToString

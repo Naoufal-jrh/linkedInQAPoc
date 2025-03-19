@@ -1,9 +1,6 @@
-package com.poc.linkedinqapoc.scraper;
+package com.poc.linkedinqapoc.scraper.models;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.*;
-
-import java.time.LocalDate;
 
 @Data
 @ToString

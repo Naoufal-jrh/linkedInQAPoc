@@ -1,17 +1,14 @@
-package com.poc.linkedinqapoc.scraper;
+package com.poc.linkedinqapoc.scraper.services;
 
+import com.poc.linkedinqapoc.scraper.models.Person;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
-    private final ScraperService scraperService;
-    private final String TOP_CARD = "main";
-    private final int WAIT_FOR_ELEMENT_TIMEOUT = 5;
 
+    private final ScraperService scraperService;
 
     public Person scrapeProfile(String profileUrl, String sessionCookie) {
         // open link

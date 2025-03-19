@@ -1,13 +1,4 @@
-package com.poc.linkedinqapoc.controller;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.poc.linkedinqapoc.services.LinkedInScraperService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.Map;
+package com.poc.linkedinqapoc.phantomBusterVersion;
 
 //@RestController
 //@RequiredArgsConstructor
