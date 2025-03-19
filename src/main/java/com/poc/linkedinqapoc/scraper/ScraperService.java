@@ -3,13 +3,12 @@ package com.poc.linkedinqapoc.scraper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.locators.RelativeLocator;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -54,105 +53,151 @@ public class ScraperService {
     }
 
     public void setSessionCookie(String sessionCookie) {
-        System.out.println("set session cookie: " + sessionCookie);
+        System.out.println("setting session cookie: " + sessionCookie);
         driver.manage().addCookie(new Cookie("li_at", sessionCookie));
         wait(5);
         driver.navigate().refresh();
     }
 
-
-    public void extractProfile(Person person) {
-        System.out.println("extracting profile");
-        // the profile information box, name, headline, school and comopany, location and contact info button.
-        WebElement root = driver.findElement(By.xpath("//*[@class='mt2 relative']"));
-        System.out.println("there are "+root.findElements(By.tagName("div")).size()+" divs inside the root element");
-
-//        extracting name and headline--------------------------------------------------------------------------------------
-        WebElement nameAndHeadLineBox = root.findElements(By.tagName("div")).get(0);
-
+    public void extractPersonalInformation(Person person) {
+        System.out.println("extracting personal information...");
+        WebElement personalInformationBox = driver.findElement(By.xpath("//*[@class='mt2 relative']"));
+//        name and headline
+        WebElement nameAndHeadLineBox = personalInformationBox.findElements(By.tagName("div")).get(0);
         String name = nameAndHeadLineBox.findElements(By.tagName("div")).get(0).getText();
+        String firstName = name.split("[ \n]")[0];
+        String lastName = name.split("[ \n]")[1];
+        String headLine = nameAndHeadLineBox.findElements(By.tagName("div")).get(3).getText();
 
-        person.setFirstName(
-                name.split(" ")[0]
-        );
-        person.setFirstName(
-                name.split(" ")[1]
-        );
-
-        person.setHeadLine(
-                nameAndHeadLineBox.findElements(By.tagName("div")).get(3).getText()
-        );
 //        company and school
-        WebElement companyAndSchoolBox = root.findElement(By.tagName("ul"));
-        System.out.println();
-        System.out.println("current company "+companyAndSchoolBox.findElements(By.tagName("span")).get(0).getText());
-        System.out.println("current school "+companyAndSchoolBox.findElements(By.tagName("span")).get(1).getText());
+        WebElement companyAndSchoolBox = personalInformationBox.findElement(By.tagName("ul"));
+        String currentCompany = companyAndSchoolBox.findElements(By.tagName("span")).get(0).getText();
+        String currentSchool = companyAndSchoolBox.findElements(By.tagName("span")).get(1).getText();
+
 //        location and personal info button
-
-        WebElement locationAndInfoButtonBox = root.findElements(By.tagName("div")).get(7);
-
-        System.out.println("current location "+locationAndInfoButtonBox.findElements(By.tagName("span")).get(0).getText());
-
+        WebElement locationAndInfoButtonBox = personalInformationBox.findElements(By.tagName("div")).get(7);
+        String currentLocation = locationAndInfoButtonBox.findElements(By.tagName("span")).get(0).getText();
 
 //        scrap contactInfo from dialogue
         locationAndInfoButtonBox.findElements(By.tagName("span")).get(1).click();
-
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(WAIT_FOR_ELEMENT_TIMEOUT));
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@class='artdeco-modal__content ember-view']")));
         WebElement contactInfoBox = driver.findElement(By.xpath("//*[@class='artdeco-modal__content ember-view']"));
 
-
-
-        System.out.println("contact info section has "+contactInfoBox.findElements(By.tagName("section")).size()+" sections");
-        System.out.println("contact info section has "+contactInfoBox.findElements(By.tagName("button")).size()+" buttons");
-        System.out.println("contact info box text : "+contactInfoBox.getText());
-
+        List<String> contactInfo = new ArrayList<>();
         for(int i=1; i<contactInfoBox.findElements(By.tagName("section")).size();i++){
             String content = contactInfoBox.findElements(By.tagName("section")).get(i).findElement(By.tagName("div")).getText();
-            System.out.println("section "+i+" has "+content);
+            contactInfo.add(content);
         }
 
+        String linkedInLink = contactInfo.get(0);
+        String email = contactInfo.get(1);
+        String joinedDate = contactInfo.get(2);
+
+        // close the dialogue
         WebElement closeButton = driver.findElement(By.xpath("//button[@aria-label='Dismiss']"));
         closeButton.click();
-//        scrap the about section
+
+//        about section
         WebElement aboutSection = driver.findElement(By.xpath("//h2[span[text()='About']]"))
                 .findElement(By.xpath("./ancestor::section"));
-        System.out.println("about section "+aboutSection.getText().split("\n")[2]);
+        String about = aboutSection.getText().split("\n")[2];
 
-//        TODO: create a function that scraps the section with the section title, handle the situation of show all button
-//        scrap experiences
+        person.setFirstName(firstName);
+        person.setLastName(lastName);
+        person.setHeadLine(headLine);
+        person.setAbout(about);
+        person.setCurrentCompany(currentCompany);
+        person.setCurrentSchool(currentSchool);
+        person.setCurrentLocation(currentLocation);
+        person.setEmail(email);
+        person.setJoinedDate(joinedDate);
+        person.setLinkedInUrl(linkedInLink);
+    }
+
+    public void extractExperience(Person person) {
+        //        scrap experiences
         WebElement experienceSection = driver.findElement(By.xpath("//h2[span[text()='Experience']]"))
                 .findElement(By.xpath("./ancestor::section"));
         List<WebElement> experienceList = experienceSection.findElements(By.tagName("li"));
 
-        System.out.println("the "+experienceList.size()+" experiences :");
-        System.out.println("------------------------------------------------------------");
+
+        List<Experience> experiences = new ArrayList<>();
+        String title="";
+        String description="";
+        String company="";
+        String type="";
+        String startDate="";
+        String endDate="";
+        String location="";
+        String duration="";
+        String model="";
         for (WebElement experience : experienceList) {
             List<WebElement> elements = experience.findElements(By.tagName("span")).stream().filter(span -> "true".equals(span.getAttribute("aria-hidden"))).toList();
-            if (elements.size() < 3) continue;
-            elements.forEach(element -> System.out.println(element.getText()));
-            System.out.println("-------------------------------------------------------------------------");
+            if (elements.size() < 4) continue;
+            title = elements.get(0).getText();
+            company = elements.get(1).getText().split("·")[0].strip();
+            type = elements.get(1).getText().split("·")[1].strip();
+            startDate = elements.get(2).getText().split("[-·]")[0].strip();
+            endDate = elements.get(2).getText().split("[-·]")[1].strip();
+            duration = elements.get(2).getText().split("[-·]")[2].strip();
+            location = elements.get(3).getText().split("·")[0].strip();
+            model = elements.get(3).getText().split("·")[1].strip();
+            if (elements.size() > 4) description = elements.get(4).getText();
+            experiences.add(
+                    Experience.builder()
+                            .title(title)
+                            .company(company)
+                            .employmentType(type)
+                            .description(description)
+                            .fromDate(startDate)
+                            .toDate(endDate)
+                            .duration(duration)
+                            .location(location)
+                            .workMode(model)
+                            .build()
+            );
         }
+        person.setExperiences(experiences);
+    }
 
-
-
-//        scrap education
+    public void extractEducation(Person person) {
+        //        scrap education
         WebElement educationSection = driver.findElement(By.xpath("//h2[span[text()='Education']]"))
                 .findElement(By.xpath("./ancestor::section"));
         List<WebElement> educationList = educationSection.findElements(By.tagName("li"));
-
-
-        System.out.println("the "+educationList.size()+" educations :");
-        System.out.println("-----------------------------------------------------------");
+        List<Education> educations = new ArrayList<>();
         for (WebElement education : educationList) {
             List<WebElement> elements = education.findElements(By.tagName("span")).stream().filter(span -> "true".equals(span.getAttribute("aria-hidden"))).toList();
             if (elements.size() < 3) continue;
-            elements.forEach(element -> System.out.println(element.getText()));
-            System.out.println("--------------------------------------------------------------");
-        }
-//        System.out.println("education section "+educationSection.getText());
+            String institution = elements.get(0).getText();
+            String degree = elements.get(1).getText().split(",")[0].strip();
+            String major = elements.get(1).getText().split(",")[1].strip();
+            String startDate = elements.get(2).getText().split("-")[0].strip();
+            String endDate = elements.get(2).getText().split("-")[1].strip();
 
+            educations.add(
+                    Education.builder()
+                            .institution(institution)
+                            .degree(degree)
+                            .major(major)
+                            .fromDate(startDate)
+                            .toDate(endDate)
+                            .build()
+            );
+        }
+        System.out.println("educations: " + educations);
+        person.setEducations(educations);
+    }
+
+    public void extractProfile(Person person) {
+        System.out.println("extracting profile...");
+        extractPersonalInformation(person);
+        extractExperience(person);
+        extractEducation(person);
+
+//        TODO: create a function that scraps the section with the section title, handle the situation of show all button
 //        TODO: scrap the languages and skills sections
     }
 

@@ -1,22 +1,22 @@
 package com.poc.linkedinqapoc.scraper;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Data
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Experience {
-    private LocalDate fromDate;
-    private LocalDate toDate;
+    private String fromDate;
+    private String toDate;
     private String description;
     private String title;
-    private String duration;
     private String location;
-    private Institution institution;
+    private String company;
+    private String employmentType;
+    private String workMode;
+    private String duration;
 }

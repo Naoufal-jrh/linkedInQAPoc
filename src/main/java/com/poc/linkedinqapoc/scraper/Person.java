@@ -14,14 +14,14 @@ public class Person implements Serializable {
     private String linkedInUrl;
     private String firstName;
     private String lastName;
-    private String headLine;
     private String about;
-    private String location;
+    private String headLine;
+    private String currentCompany;
+    private String currentSchool;
+    private String currentLocation;
+    private String email;
+    private String joinedDate;
+
     private List<Experience> experiences;
-    private List<Education> education;
-    private List<Interest> interests;
-    private List<Accomplishment> accomplishments;
-    private String company;
-    private String jobTitle;
-    private List<Contact> contactList;
+    private List<Education> educations;
 }

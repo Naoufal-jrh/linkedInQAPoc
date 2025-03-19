@@ -1,20 +1,21 @@
 package com.poc.linkedinqapoc.scraper;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Data
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Education {
-    private LocalDate fromDate;
-    private LocalDate toDate;
+    private String degree;
+    private String major;
+    private String fromDate;
+    private String toDate;
     private String description;
     private String location;
-    private Institution institution;
+    private String institution;
 }
