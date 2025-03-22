@@ -9,10 +9,15 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.AbstractCachingViewResolver;
 
+import javax.swing.text.html.Option;
+import java.sql.Struct;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Getter
@@ -20,6 +25,7 @@ import java.util.List;
 public class ScraperService {
     private final WebDriver driver;
     private static final int WAIT_FOR_ELEMENT_TIMEOUT = 5;
+    private final AbstractCachingViewResolver abstractCachingViewResolver;
 
     public static void wait(int duration) {
         try {
@@ -194,11 +200,75 @@ public class ScraperService {
         person.setEducations(educations);
     }
 
+    public void extractLanguages(Person person) {
+
+    }
+
+    public void extractSkills(Person person) {
+//        finding the skills section in the profile
+        WebElement skillsSection = driver.findElement(By.xpath("//h2[span[text()='Skills']]"))
+                .findElement(By.xpath("./ancestor::section"));
+//        locating the show all button
+        Optional<WebElement> showAllButton = skillsSection.findElements(
+                By.xpath("./descendant::a")
+                )
+                .stream()
+                .filter(webElement -> webElement.getText().contains("Show all"))
+                .findFirst();
+//        extracting the skills of the profile
+        if(showAllButton.isPresent()) {
+            showAllButton.get().click();
+            // close the cookies alert
+            driver.findElements(By.xpath("//button")).stream().filter(webElement -> webElement.getText().equals("Reject")).findFirst().ifPresent(WebElement::click);
+            wait(3);
+            WebElement extendedSkillsSection = driver.findElement(By.xpath("//h1[text()='Skills']"))
+                    .findElement(By.xpath("./ancestor::section"));
+
+            List<WebElement> skillsList = extendedSkillsSection.findElements(By.xpath(".//li[.//li//span[@aria-hidden='true']]"))
+                    .stream()
+                    .filter(skill -> !skill.getText().isEmpty())
+                    .toList();
+
+            skillsList.forEach(skillsListElement -> {
+                String skill = skillsListElement.findElement(By.xpath(".//a//span[@aria-hidden='true']")).getText();
+                List<WebElement> institutionsBox = skillsListElement.findElements(By.xpath(".//li//span[@aria-hidden='true']"));
+                List<String> institutions = new ArrayList<>();
+                for (WebElement institutionBox : institutionsBox) {
+                    if (institutionBox.getText().contains("experiences across ")) extractSkillsFromLink(institutionBox,institutions);
+                    else institutions.add(institutionBox.getText());
+                }
+                System.out.println("skill: " + skill);
+                System.out.println("institutions : ");
+                institutions.forEach(System.out::println);
+            });
+        }
+        else System.out.println("No Show All Button");
+        }
+
+
+
+        public void extractSkillsFromLink(WebElement institutionBox, List<String> institutions) {
+            institutionBox.click();
+            wait(2);
+
+            WebElement institutionsDialog = driver.findElement(By.xpath(".//div[span[text()='Dialog content start.']]"));
+
+            List<WebElement> institutionList = institutionsDialog.findElements(By.xpath(".//li//span[@aria-hidden='true']"));
+
+            institutionList.forEach(institution -> {
+                institutions.add(institution.getText());
+            });
+            WebElement closeButton = institutionsDialog.findElement(By.tagName("button"));
+            wait(2);
+            closeButton.click();
+        }
+
     public void extractProfile(Person person) {
         System.out.println("extracting profile...");
-        extractPersonalInformation(person);
-        extractExperience(person);
-        extractEducation(person);
+//        extractPersonalInformation(person);
+//        extractExperience(person);
+//        extractEducation(person);
+          extractSkills(person);
 
 //        TODO: create a function that scraps the section with the section title, handle the situation of show all button
 //        TODO: scrap the languages and skills sections

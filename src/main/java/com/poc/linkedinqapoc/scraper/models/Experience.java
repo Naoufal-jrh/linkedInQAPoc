@@ -2,6 +2,8 @@ package com.poc.linkedinqapoc.scraper.models;
 
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @ToString
 @AllArgsConstructor
@@ -17,4 +19,6 @@ public class Experience {
     private String employmentType;
     private String workMode;
     private String duration;
+
+    private List<String> acquiredSkills;
 }

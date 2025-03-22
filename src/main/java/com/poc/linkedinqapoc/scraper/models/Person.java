@@ -24,4 +24,5 @@ public class Person implements Serializable {
 
     private List<Experience> experiences;
     private List<Education> educations;
+    private List<String> selfAcquiredSkills;
 }
